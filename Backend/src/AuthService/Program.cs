@@ -100,8 +100,8 @@ app.UseExceptionHandler(a => a.Run(async ctx =>
     if (ex is UnauthorizedAccessException)
     {
         ctx.Response.StatusCode = 401;
-        ctx.Response.ContentType = "text/plain";
-        await ctx.Response.WriteAsync(ex.Message);
+        ctx.Response.ContentType = "application/json";
+        await ctx.Response.WriteAsJsonAsync(new { statusCode = 401, message = ex.Message });
     }
 }));
 
