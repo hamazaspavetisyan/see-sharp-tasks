@@ -45,4 +45,52 @@ public class RegisterEndpointTests(AuthServiceFactory factory)
 
         response.StatusCode.Should().BeOneOf(HttpStatusCode.BadRequest, HttpStatusCode.UnsupportedMediaType);
     }
+
+    [Fact]
+    public async Task Register_InvalidEmailFormat_Returns400()
+    {
+        var response = await _client.PostAsJsonAsync("/api/auth/register", new
+        {
+            Email = "not-an-email",
+            Password = "ValidPass1!"
+        });
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task Register_EmptyEmail_Returns400()
+    {
+        var response = await _client.PostAsJsonAsync("/api/auth/register", new
+        {
+            Email = "",
+            Password = "ValidPass1!"
+        });
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task Register_ShortPassword_Returns400()
+    {
+        var response = await _client.PostAsJsonAsync("/api/auth/register", new
+        {
+            Email = "short@example.com",
+            Password = "abc"
+        });
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task Register_EmptyPassword_Returns400()
+    {
+        var response = await _client.PostAsJsonAsync("/api/auth/register", new
+        {
+            Email = "empty@example.com",
+            Password = ""
+        });
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
 }

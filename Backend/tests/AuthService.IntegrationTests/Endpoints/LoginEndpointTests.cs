@@ -58,4 +58,40 @@ public class LoginEndpointTests(AuthServiceFactory factory)
 
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
+
+    [Fact]
+    public async Task Login_InvalidEmailFormat_Returns400()
+    {
+        var response = await _client.PostAsJsonAsync("/api/auth/login", new
+        {
+            Email = "not-an-email",
+            Password = "SomePass1!"
+        });
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task Login_EmptyEmail_Returns400()
+    {
+        var response = await _client.PostAsJsonAsync("/api/auth/login", new
+        {
+            Email = "",
+            Password = "SomePass1!"
+        });
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task Login_EmptyPassword_Returns400()
+    {
+        var response = await _client.PostAsJsonAsync("/api/auth/login", new
+        {
+            Email = "empty@example.com",
+            Password = ""
+        });
+
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
 }
