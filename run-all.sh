@@ -3,28 +3,32 @@ set -e
 
 ROOT="$(cd "$(dirname "$0")" && pwd)"
 
+if [ -f "$ROOT/.env" ]; then
+  set -a; source "$ROOT/.env"; set +a
+else
+  echo "ERROR: .env file not found. Copy .env.example and fill in your secrets." >&2
+  exit 1
+fi
+
 echo "=== Tasks Management App ==="
 echo "Starting: AuthService (5100/5101), TaskService (5200/5201), Gateway (5000), Frontend (4200)"
 echo ""
 echo "Pre-requisites:"
-echo "  dotnet user-secrets set 'Jwt:Secret' '<your-32-char-secret>' --project src/AuthService"
-echo "  dotnet user-secrets set 'Jwt:Secret' '<your-32-char-secret>' --project src/TaskService"
-echo "  dotnet user-secrets set 'Jwt:Secret' '<your-32-char-secret>' --project src/Gateway"
-echo "  dotnet ef database update --project src/AuthService"
-echo "  dotnet ef database update --project src/TaskService"
+echo "  dotnet ef database update --project Backend/src/AuthService"
+echo "  dotnet ef database update --project Backend/src/TaskService"
 echo ""
 
 # Start each service in background
-dotnet run --project "$ROOT/src/AuthService" &
+dotnet run --project "$ROOT/Backend/src/AuthService" &
 AUTH_PID=$!
 
-dotnet run --project "$ROOT/src/TaskService" &
+dotnet run --project "$ROOT/Backend/src/TaskService" &
 TASK_PID=$!
 
-dotnet run --project "$ROOT/src/Gateway" &
+dotnet run --project "$ROOT/Backend/src/Gateway" &
 GW_PID=$!
 
-cd "$ROOT/../Frontend" && ng serve --port 4200 &
+cd "$ROOT/Frontend" && ng serve --port 4200 &
 FE_PID=$!
 
 echo "PIDs: AuthService=$AUTH_PID, TaskService=$TASK_PID, Gateway=$GW_PID, Frontend=$FE_PID"
