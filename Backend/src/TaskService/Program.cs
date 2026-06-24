@@ -1,5 +1,6 @@
 using System.Text;
 using FastEndpoints;
+using FastEndpoints.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
@@ -79,11 +80,23 @@ builder.Services.AddScoped<IUserValidationService, UserValidationClient>();
 builder.Services.AddFastEndpoints();
 builder.Services.AddHttpContextAccessor();
 
+// Swagger
+builder.Services.SwaggerDocument(o =>
+{
+    o.EnableJWTBearerAuth = true;
+    o.DocumentSettings = s =>
+    {
+        s.Title = "Task Service API";
+        s.Version = "v1";
+    };
+});
+
 var app = builder.Build();
 
 app.UseAuthentication();
 app.UseAuthorization();
 app.UseFastEndpoints();
+app.UseSwaggerGen();
 
 app.Run();
 

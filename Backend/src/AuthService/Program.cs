@@ -6,6 +6,7 @@ using AuthService.Infrastructure.Persistence;
 using AuthService.Infrastructure.Services;
 using FastEndpoints;
 using FastEndpoints.Security;
+using FastEndpoints.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
@@ -74,6 +75,17 @@ builder.Services.AddHttpContextAccessor();
 // FastEndpoints
 builder.Services.AddFastEndpoints();
 
+// Swagger
+builder.Services.SwaggerDocument(o =>
+{
+    o.EnableJWTBearerAuth = true;
+    o.DocumentSettings = s =>
+    {
+        s.Title = "Auth Service API";
+        s.Version = "v1";
+    };
+});
+
 // gRPC
 builder.Services.AddGrpc();
 
@@ -84,6 +96,7 @@ app.UseAuthorization();
 
 app.UseFastEndpoints();
 app.MapGrpcService<UserValidationGrpcService>();
+app.UseSwaggerGen();
 
 app.Run();
 
