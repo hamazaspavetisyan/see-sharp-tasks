@@ -20,7 +20,7 @@ public class GetMeEndpoint : EndpointWithoutRequest<UserDto>
         var userIdClaim = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value
             ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
-        if (userIdClaim is null || !Guid.TryParse(userIdClaim, out var userId))
+        if (userIdClaim is null || !Guid.TryParse(userIdClaim, out var userId)) // xxxx todo
         {
             ThrowError("Unauthorized.", 401);
             return;

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AuthService.Application.Queries;
 
-public class GetCurrentUserQueryHandler(AuthDbContext db) : IRequestHandler<GetCurrentUserQuery, UserDto>
+public class GetCurrentUserQueryHandler(AuthDbContext db) : IRequestHandler<GetCurrentUserQuery, UserDto>// xxxx todo, who knows about this class?
 {
     public async Task<UserDto> Handle(GetCurrentUserQuery request, CancellationToken cancellationToken)
     {
