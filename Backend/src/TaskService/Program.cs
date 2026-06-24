@@ -25,7 +25,14 @@ builder.WebHost.ConfigureKestrel(options =>
 // EF Core + MySQL
 builder.Services.AddDbContext<TasksDbContext>(options =>
 {
-    var connStr = builder.Configuration.GetConnectionString("TasksDb")!;
+    var connStr = builder.Configuration.GetConnectionString("TasksDb");
+    if (string.IsNullOrEmpty(connStr))
+    {
+        using var lf = LoggerFactory.Create(b => b.AddConsole());
+        lf.CreateLogger("Startup").LogCritical(
+            "ConnectionStrings:TasksDb is not configured. Set it via an environment variable.");
+        throw new InvalidOperationException("ConnectionStrings:TasksDb must be configured via user-secrets or environment.");
+    }
     options.UseMySql(connStr, new MySqlServerVersion(new Version(8, 0, 0)));
 });
 

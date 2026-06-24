@@ -23,7 +23,14 @@ builder.WebHost.ConfigureKestrel(options =>
 // EF Core + MySQL (AutoDetect is not used to avoid startup MySQL connection)
 builder.Services.AddDbContext<AuthDbContext>(options =>
 {
-    var connStr = builder.Configuration.GetConnectionString("AuthDb")!;
+    var connStr = builder.Configuration.GetConnectionString("AuthDb");
+    if (string.IsNullOrEmpty(connStr))
+    {
+        using var lf = LoggerFactory.Create(b => b.AddConsole());
+        lf.CreateLogger("Startup").LogCritical(
+            "ConnectionStrings:AuthDb is not configured. Set it via an environment variable.");
+        throw new InvalidOperationException("ConnectionStrings:AuthDb must be configured via user-secrets or environment.");
+    }
     options.UseMySql(connStr, new MySqlServerVersion(new Version(8, 0, 0)));
 });
 
