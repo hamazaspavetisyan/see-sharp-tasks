@@ -8,8 +8,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddJsonFile("ocelot.json", optional: false, reloadOnChange: true);
 
-var jwtSecret = builder.Configuration["Jwt:Secret"]
-    ?? throw new InvalidOperationException("Jwt:Secret must be configured.");
+var jwtSecret = builder.Configuration["Jwt:Secret"];
+if (string.IsNullOrEmpty(jwtSecret))
+{
+    using var lf = LoggerFactory.Create(b => b.AddConsole());
+    lf.CreateLogger("Startup").LogCritical(
+        "Jwt:Secret is not configured. Set it via user-secrets or an environment variable.");
+    throw new InvalidOperationException("Jwt:Secret must be configured via user-secrets or environment.");
+}
 var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "TasksApp.AuthService";
 var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "TasksApp";
 
