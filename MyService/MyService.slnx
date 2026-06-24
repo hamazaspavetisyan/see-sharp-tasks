@@ -1,0 +1,13 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="src/AuthService/AuthService.csproj" />
+    <Project Path="src/Gateway/Gateway.csproj" />
+    <Project Path="src/TaskService/TaskService.csproj" />
+  </Folder>
+  <Folder Name="/tests/">
+    <Project Path="tests/AuthService.IntegrationTests/AuthService.IntegrationTests.csproj" />
+    <Project Path="tests/AuthService.UnitTests/AuthService.UnitTests.csproj" />
+    <Project Path="tests/TaskService.IntegrationTests/TaskService.IntegrationTests.csproj" />
+    <Project Path="tests/TaskService.UnitTests/TaskService.UnitTests.csproj" />
+  </Folder>
+</Solution>

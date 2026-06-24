@@ -1,0 +1,77 @@
+using System.Text;
+using FastEndpoints;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Server.Kestrel.Core;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.IdentityModel.Tokens;
+using TaskService.Application.Commands.Tasks;
+using TaskService.Application.Services;
+using TaskService.Infrastructure.GrpcClients;
+using TaskService.Infrastructure.Persistence;
+using TaskService.Protos;
+
+// Required for gRPC over cleartext HTTP/2 on macOS
+AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);
+
+var builder = WebApplication.CreateBuilder(args);
+
+// Kestrel: HTTP/1+2 on 5200 (REST), HTTP/2 only on 5201 (gRPC)
+builder.WebHost.ConfigureKestrel(options =>
+{
+    options.ListenLocalhost(5200, o => o.Protocols = HttpProtocols.Http1AndHttp2);
+    options.ListenLocalhost(5201, o => o.Protocols = HttpProtocols.Http2);
+});
+
+// EF Core + MySQL
+builder.Services.AddDbContext<TasksDbContext>(options =>
+{
+    var connStr = builder.Configuration.GetConnectionString("TasksDb")!;
+    options.UseMySql(connStr, new MySqlServerVersion(new Version(8, 0, 0)));
+});
+
+// MediatR
+builder.Services.AddMediatR(cfg =>
+    cfg.RegisterServicesFromAssemblyContaining<CreateTaskCommand>());
+
+// JWT
+var jwtSecret = builder.Configuration["Jwt:Secret"]
+    ?? throw new InvalidOperationException("Jwt:Secret must be configured.");
+var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "TasksApp.AuthService";
+var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "TasksApp";
+
+builder.Services
+    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtIssuer,
+            ValidAudience = jwtAudience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret))
+        };
+    });
+builder.Services.AddAuthorization();
+
+// gRPC client → AuthService
+var authGrpcAddress = builder.Configuration["AuthService:GrpcAddress"] ?? "http://localhost:5101";
+builder.Services.AddGrpcClient<UserValidation.UserValidationClient>(o =>
+    o.Address = new Uri(authGrpcAddress));
+builder.Services.AddScoped<IUserValidationService, UserValidationClient>();
+
+// FastEndpoints
+builder.Services.AddFastEndpoints();
+builder.Services.AddHttpContextAccessor();
+
+var app = builder.Build();
+
+app.UseAuthentication();
+app.UseAuthorization();
+app.UseFastEndpoints();
+
+app.Run();
+
+public partial class Program { }

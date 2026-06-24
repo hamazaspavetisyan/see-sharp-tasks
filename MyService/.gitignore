@@ -1,0 +1,40 @@
+## .NET
+bin/
+obj/
+*.user
+*.suo
+.vs/
+.idea/
+*.DotSettings.user
+
+## NuGet
+*.nupkg
+*.snupkg
+project.lock.json
+project.nuget.cache
+.nuget/
+
+## EF Core migrations (generated)
+## Uncomment below if you want to exclude migrations from VCS:
+# **/Migrations/
+
+## Secrets
+appsettings.*.json
+!appsettings.json
+!appsettings.Development.json
+usersecrets/
+
+## Node / Angular
+node_modules/
+dist/
+.angular/
+*.js.map
+
+## macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+## Logs
+*.log
+npm-debug.log*
