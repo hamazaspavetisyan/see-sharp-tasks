@@ -1,5 +1,4 @@
 using System.Net;
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using FluentAssertions;
 using TaskService.Application.DTOs;
@@ -12,9 +11,7 @@ public class TasksEndpointTests(TaskServiceFactory factory) : IClassFixture<Task
     private readonly HttpClient _client = factory.CreateClient();
     private readonly Guid _userId = Guid.NewGuid();
 
-    private void Authenticate() =>
-        _client.DefaultRequestHeaders.Authorization =
-            new AuthenticationHeaderValue("Bearer", JwtTestHelper.GenerateToken(_userId));
+    private void Authenticate() => JwtTestHelper.SetUserId(_client, _userId);
 
     [Fact]
     public async Task GetTasks_Authenticated_Returns200()
@@ -25,9 +22,9 @@ public class TasksEndpointTests(TaskServiceFactory factory) : IClassFixture<Task
     }
 
     [Fact]
-    public async Task GetTasks_NoToken_Returns401()
+    public async Task GetTasks_NoUserId_Returns401()
     {
-        _client.DefaultRequestHeaders.Authorization = null;
+        JwtTestHelper.ClearUserId(_client);
         var response = await _client.GetAsync("/api/tasks");
         response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
     }
@@ -36,7 +33,6 @@ public class TasksEndpointTests(TaskServiceFactory factory) : IClassFixture<Task
     public async Task CreateTask_ValidRequest_Returns201()
     {
         Authenticate();
-        // Priority: High=2, Status: Todo=0
         var payload = new { Name = "Integration Task", Priority = 2, Status = 0, Tags = new[] { "test" } };
         var response = await _client.PostAsJsonAsync("/api/tasks", payload);
         response.StatusCode.Should().Be(HttpStatusCode.Created);
@@ -46,7 +42,6 @@ public class TasksEndpointTests(TaskServiceFactory factory) : IClassFixture<Task
     public async Task CreateAndGetTask_ReturnsCreatedTask()
     {
         Authenticate();
-        // Priority: Low=0, Status: Todo=0
         var payload = new { Name = "Find Me", Priority = 0, Status = 0, Tags = Array.Empty<string>() };
         var createResponse = await _client.PostAsJsonAsync("/api/tasks", payload);
         createResponse.StatusCode.Should().Be(HttpStatusCode.Created);

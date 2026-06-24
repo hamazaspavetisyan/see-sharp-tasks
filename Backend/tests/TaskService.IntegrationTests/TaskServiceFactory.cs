@@ -15,10 +15,6 @@ public class TaskServiceFactory : WebApplicationFactory<Program>
 
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.UseSetting("Jwt:Secret", "test-integration-secret-key-at-least-32-chars!!");
-        builder.UseSetting("Jwt:Issuer", "TasksApp.AuthService");
-        builder.UseSetting("Jwt:Audience", "TasksApp");
-
         builder.ConfigureServices(services =>
         {
             // Remove MySQL DbContext registrations (same pattern as AuthService factory)

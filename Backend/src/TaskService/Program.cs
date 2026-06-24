@@ -64,6 +64,17 @@ builder.Services.SwaggerDocument(o =>
 
 var app = builder.Build();
 
+app.UseExceptionHandler(a => a.Run(async ctx =>
+{
+    var ex = ctx.Features.Get<Microsoft.AspNetCore.Diagnostics.IExceptionHandlerFeature>()?.Error;
+    if (ex is UnauthorizedAccessException)
+    {
+        ctx.Response.StatusCode = 401;
+        ctx.Response.ContentType = "text/plain";
+        await ctx.Response.WriteAsync(ex.Message);
+    }
+}));
+
 app.UseFastEndpoints();
 app.UseSwaggerGen();
 
