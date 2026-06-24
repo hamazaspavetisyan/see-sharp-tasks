@@ -1,4 +1,5 @@
 using FastEndpoints;
+using FluentValidation;
 using MediatR;
 using TaskService.Application.Commands.Tasks;
 using TaskService.Application.DTOs;
@@ -15,6 +16,24 @@ public class CreateTaskRequest
     public TaskPriority Priority { get; set; } = TaskPriority.Medium;
     public DateTime? DueDate { get; set; }
     public List<string> Tags { get; set; } = new();
+}
+
+public class CreateTaskRequestValidator : Validator<CreateTaskRequest>
+{
+    public CreateTaskRequestValidator()
+    {
+        RuleFor(x => x.Name)
+            .NotEmpty()
+            .MaximumLength(200);
+
+        RuleFor(x => x.Description)
+            .MaximumLength(2000)
+            .When(x => x.Description is not null);
+
+        RuleFor(x => x.DueDate)
+            .GreaterThan(DateTime.UtcNow).WithMessage("Due date must be in the future.")
+            .When(x => x.DueDate is not null);
+    }
 }
 
 public class CreateTaskEndpoint : Endpoint<CreateTaskRequest, TaskItemDto>

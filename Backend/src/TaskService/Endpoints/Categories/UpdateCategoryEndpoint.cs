@@ -1,4 +1,5 @@
 using FastEndpoints;
+using FluentValidation;
 using MediatR;
 using TaskService.Application.Commands.Categories;
 using TaskService.Application.DTOs;
@@ -9,6 +10,16 @@ public class UpdateCategoryRequest
 {
     public Guid Id { get; set; }
     public string Name { get; set; } = default!;
+}
+
+public class UpdateCategoryRequestValidator : Validator<UpdateCategoryRequest>
+{
+    public UpdateCategoryRequestValidator()
+    {
+        RuleFor(x => x.Name)
+            .NotEmpty()
+            .MaximumLength(100);
+    }
 }
 
 public class UpdateCategoryEndpoint : Endpoint<UpdateCategoryRequest, CategoryDto>

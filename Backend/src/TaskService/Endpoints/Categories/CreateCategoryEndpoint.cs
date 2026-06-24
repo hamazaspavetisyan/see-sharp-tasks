@@ -1,4 +1,5 @@
 using FastEndpoints;
+using FluentValidation;
 using MediatR;
 using TaskService.Application.Commands.Categories;
 using TaskService.Application.DTOs;
@@ -8,6 +9,16 @@ namespace TaskService.Endpoints.Categories;
 public class CreateCategoryRequest
 {
     public string Name { get; set; } = default!;
+}
+
+public class CreateCategoryRequestValidator : Validator<CreateCategoryRequest>
+{
+    public CreateCategoryRequestValidator()
+    {
+        RuleFor(x => x.Name)
+            .NotEmpty()
+            .MaximumLength(100);
+    }
 }
 
 public class CreateCategoryEndpoint : Endpoint<CreateCategoryRequest, CategoryDto>

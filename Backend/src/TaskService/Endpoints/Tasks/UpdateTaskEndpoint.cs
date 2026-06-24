@@ -1,4 +1,5 @@
 using FastEndpoints;
+using FluentValidation;
 using MediatR;
 using TaskService.Application.Commands.Tasks;
 using TaskService.Application.DTOs;
@@ -16,6 +17,20 @@ public class UpdateTaskRequest
     public TaskPriority Priority { get; set; }
     public DateTime? DueDate { get; set; }
     public List<string> Tags { get; set; } = new();
+}
+
+public class UpdateTaskRequestValidator : Validator<UpdateTaskRequest>
+{
+    public UpdateTaskRequestValidator()
+    {
+        RuleFor(x => x.Name)
+            .NotEmpty()
+            .MaximumLength(200);
+
+        RuleFor(x => x.Description)
+            .MaximumLength(2000)
+            .When(x => x.Description is not null);
+    }
 }
 
 public class UpdateTaskEndpoint : Endpoint<UpdateTaskRequest, TaskItemDto>
