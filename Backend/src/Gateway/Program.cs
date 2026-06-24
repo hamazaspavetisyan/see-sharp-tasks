@@ -39,9 +39,16 @@ builder.Services
         };
     });
 
-builder.Services.AddOcelot(builder.Configuration);
+builder.Services.AddOcelot(builder.Configuration); // xxxx todo, how Addocelot became available in the Services ?
 
 var app = builder.Build();
+
+app.Use(async (ctx, next) =>
+{
+    var ip = ctx.Connection.RemoteIpAddress?.ToString() ?? "unknown";
+    ctx.Request.Headers["X-Real-IP"] = ip;
+    await next();
+});
 
 app.UseAuthentication();
 await app.UseOcelot();

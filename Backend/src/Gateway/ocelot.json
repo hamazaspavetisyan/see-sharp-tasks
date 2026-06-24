@@ -127,6 +127,7 @@
   "GlobalConfiguration": {
     "BaseUrl": "http://localhost:5000",
     "RateLimitOptions": {
+      "ClientIdHeader": "X-Real-IP",
       "DisableRateLimitHeaders": false,
       "QuotaExceededMessage": "Too many requests, please try again later.",
       "HttpStatusCode": 429
