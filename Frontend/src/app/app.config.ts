@@ -9,6 +9,15 @@ import en from '@angular/common/locales/en';
 import { FormsModule } from '@angular/forms';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { authInterceptor } from './auth/auth.interceptor';
+import { provideNzIcons } from 'ng-zorro-antd/icon';
+import {
+  CheckSquareOutline,
+  DeleteOutline,
+  EditOutline,
+  PlusOutline,
+  SearchOutline,
+  TagsOutline
+} from '@ant-design/icons-angular/icons';
 
 registerLocaleData(en);
 
@@ -19,6 +28,7 @@ export const appConfig: ApplicationConfig = {
     provideNzI18n(en_US),
     importProvidersFrom(FormsModule),
     provideAnimationsAsync(),
-    provideHttpClient(withInterceptors([authInterceptor]))
+    provideHttpClient(withInterceptors([authInterceptor])),
+    provideNzIcons([CheckSquareOutline, DeleteOutline, EditOutline, PlusOutline, SearchOutline, TagsOutline])
   ]
 };

@@ -163,7 +163,7 @@ import { UserDto } from '../shared/models/models';
         <div *ngIf="activeView==='categories'" style="padding:24px">
           <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
             <h2 style="margin:0;font-size:22px">Categories</h2>
-            <button nz-button nzType="primary" (click)="showCategoryForm=true;categoryForm={name:''}">
+            <button nz-button nzType="primary" (click)="openCategoryForm()">
               <span nz-icon nzType="plus"></span> New Category
             </button>
           </div>
@@ -424,6 +424,11 @@ export class TaskListComponent implements OnInit {
       next: () => { this.categoryForm = { name: '' }; this.showCategoryForm = false; this.loadCategories(); },
       error: () => this.msg.error('Failed to create category')
     });
+  }
+
+  openCategoryForm() {
+    this.categoryForm = { name: '' };
+    this.showCategoryForm = true;
   }
 
   cancelCategoryForm() {
