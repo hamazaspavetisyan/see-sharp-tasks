@@ -127,11 +127,6 @@
     }
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "http://localhost:5000",
-    "RateLimitOptions": {
-      "DisableRateLimitHeaders": false,
-      "QuotaExceededMessage": "Too many requests, please try again later.",
-      "HttpStatusCode": 429
-    }
+    "BaseUrl": "http://localhost:5000"
   }
 }
