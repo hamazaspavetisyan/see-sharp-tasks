@@ -1,4 +1,3 @@
-using System.IdentityModel.Tokens.Jwt;
 using AuthService.Application.DTOs;
 using AuthService.Application.Queries;
 using FastEndpoints;
@@ -13,19 +12,12 @@ public class GetMeEndpoint : EndpointWithoutRequest<UserDto>
     public override void Configure()
     {
         Get("/api/auth/me");
+        AllowAnonymous();
     }
 
     public override async Task HandleAsync(CancellationToken ct)
     {
-        var userIdClaim = User.FindFirst(JwtRegisteredClaimNames.Sub)?.Value
-            ?? User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-        if (userIdClaim is null || !Guid.TryParse(userIdClaim, out var userId)) // xxxx todo
-        {
-            ThrowError("Unauthorized.", 401);
-            return;
-        }
-
+        var userId = EndpointHelper.GetUserId(HttpContext.Request);
         try
         {
             var result = await Mediator.Send(new GetCurrentUserQuery(userId), ct);

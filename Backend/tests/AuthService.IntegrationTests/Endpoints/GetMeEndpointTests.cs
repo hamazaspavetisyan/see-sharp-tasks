@@ -1,5 +1,4 @@
 using System.Net;
-using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using AuthService.Application.DTOs;
 using FluentAssertions;
@@ -10,19 +9,18 @@ public class GetMeEndpointTests(AuthServiceFactory factory) : IClassFixture<Auth
 {
     private readonly HttpClient _client = factory.CreateClient();
 
-    private async Task<string> RegisterAndLoginAsync(string email, string password)
+    private async Task<Guid> RegisterAsync(string email, string password)
     {
-        await _client.PostAsJsonAsync("/api/auth/register", new { Email = email, Password = password });
-        var response = await _client.PostAsJsonAsync("/api/auth/login", new { Email = email, Password = password });
-        var body = await response.Content.ReadFromJsonAsync<LoginResponse>();
-        return body!.Token;
+        var response = await _client.PostAsJsonAsync("/api/auth/register", new { Email = email, Password = password });
+        var body = await response.Content.ReadFromJsonAsync<RegisterResponse>();
+        return body!.Id;
     }
 
     [Fact]
-    public async Task GetMe_ValidToken_Returns200WithUserInfo()
+    public async Task GetMe_ValidUserId_Returns200WithUserInfo()
     {
-        var token = await RegisterAndLoginAsync("me@example.com", "ValidPass1!");
-        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", token);
+        var userId = await RegisterAsync("me@example.com", "ValidPass1!");
+        _client.DefaultRequestHeaders.Add("X-User-Id", userId.ToString());
 
         var response = await _client.GetAsync("/api/auth/me");
 
@@ -33,9 +31,9 @@ public class GetMeEndpointTests(AuthServiceFactory factory) : IClassFixture<Auth
     }
 
     [Fact]
-    public async Task GetMe_NoToken_Returns401()
+    public async Task GetMe_NoUserId_Returns401()
     {
-        _client.DefaultRequestHeaders.Authorization = null;
+        _client.DefaultRequestHeaders.Remove("X-User-Id");
 
         var response = await _client.GetAsync("/api/auth/me");
 
@@ -43,12 +41,13 @@ public class GetMeEndpointTests(AuthServiceFactory factory) : IClassFixture<Auth
     }
 
     [Fact]
-    public async Task GetMe_InvalidToken_Returns401()
+    public async Task GetMe_UnknownUserId_Returns404()
     {
-        _client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", "invalid.token.here");
+        _client.DefaultRequestHeaders.Remove("X-User-Id");
+        _client.DefaultRequestHeaders.Add("X-User-Id", Guid.NewGuid().ToString());
 
         var response = await _client.GetAsync("/api/auth/me");
 
-        response.StatusCode.Should().Be(HttpStatusCode.Unauthorized);
+        response.StatusCode.Should().Be(HttpStatusCode.NotFound);
     }
 }
