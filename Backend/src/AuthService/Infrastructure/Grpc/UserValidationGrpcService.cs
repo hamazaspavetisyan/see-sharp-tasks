@@ -7,7 +7,7 @@ namespace AuthService.Infrastructure.Grpc;
 
 public class UserValidationGrpcService(AuthDbContext db) : UserValidation.UserValidationBase
 {
-    public override async Task<ValidateUserResponse> ValidateUser(
+    public override async Task<ValidateUserResponse> ValidateUser(// xxxx todo
         ValidateUserRequest request,
         ServerCallContext context)
     {

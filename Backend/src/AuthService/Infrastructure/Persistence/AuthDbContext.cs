@@ -5,7 +5,7 @@ namespace AuthService.Infrastructure.Persistence;
 
 public class AuthDbContext(DbContextOptions<AuthDbContext> options) : DbContext(options)
 {
-    public DbSet<User> Users => Set<User>();
+    public DbSet<User> Users => Set<User>();// xxxx todo
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
