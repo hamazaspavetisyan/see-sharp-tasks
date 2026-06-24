@@ -1,3 +1,4 @@
+using DotNetEnv;
 using FastEndpoints;
 using FastEndpoints.Swagger;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -7,6 +8,8 @@ using TaskService.Application.Services;
 using TaskService.Infrastructure.GrpcClients;
 using TaskService.Infrastructure.Persistence;
 using TaskService.Protos;
+
+Env.TraversePath().Load();
 
 // Required for gRPC over cleartext HTTP/2 on macOS
 AppContext.SetSwitch("System.Net.Http.SocketsHttpHandler.Http2UnencryptedSupport", true);

@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <PackageReference Include="DotNetEnv" Version="3.2.0" />
     <PackageReference Include="FastEndpoints" Version="8.2.0" />
     <PackageReference Include="FastEndpoints.Security" Version="8.2.0" />
     <PackageReference Include="FastEndpoints.Swagger" Version="8.2.0" />

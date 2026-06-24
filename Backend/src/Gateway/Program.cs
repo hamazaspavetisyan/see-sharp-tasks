@@ -1,8 +1,11 @@
 using System.Text;
+using DotNetEnv;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Ocelot.DependencyInjection;
 using Ocelot.Middleware;
+
+Env.TraversePath().Load();
 
 var builder = WebApplication.CreateBuilder(args);
 

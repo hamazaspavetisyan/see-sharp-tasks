@@ -4,6 +4,7 @@ using AuthService.Application.Services;
 using AuthService.Infrastructure.Grpc;
 using AuthService.Infrastructure.Persistence;
 using AuthService.Infrastructure.Services;
+using DotNetEnv;
 using FastEndpoints;
 using FastEndpoints.Security;
 using FastEndpoints.Swagger;
@@ -11,6 +12,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
+
+Env.TraversePath().Load();
 
 var builder = WebApplication.CreateBuilder(args);
 
