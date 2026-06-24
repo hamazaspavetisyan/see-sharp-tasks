@@ -20,8 +20,8 @@ export class TaskService {
 
   getTasks(page = 1, pageSize = 20, status?: TaskItemStatus, priority?: TaskPriority, search?: string, categoryId?: string): Observable<PagedResult<TaskItemDto>> {
     let params = new HttpParams().set('page', page).set('pageSize', pageSize);
-    if (status !== undefined) params = params.set('status', status);
-    if (priority !== undefined) params = params.set('priority', priority);
+    if (status != null) params = params.set('status', status);
+    if (priority != null) params = params.set('priority', priority);
     if (search) params = params.set('search', search);
     if (categoryId) params = params.set('categoryId', categoryId);
     return this.http.get<PagedResult<TaskItemDto>>('/api/tasks', { params });

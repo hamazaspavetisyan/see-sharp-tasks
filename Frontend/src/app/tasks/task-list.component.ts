@@ -223,7 +223,7 @@ import { UserDto } from '../shared/models/models';
     </div>
 
     <!-- Task drawer (create / edit) -->
-    <nz-drawer [nzVisible]="drawerVisible" nzWidth="440"
+    <nz-drawer [nzVisible]="drawerVisible" [nzWidth]="680"
                [nzTitle]="editingTask ? 'Edit Task' : 'New Task'"
                (nzOnClose)="closeDrawer()">
       <ng-container *nzDrawerContent>
@@ -274,8 +274,8 @@ import { UserDto } from '../shared/models/models';
           </div>
 
           <div>
-            <div style="font-size:13px;font-weight:500;margin-bottom:4px">Tags (comma-separated)</div>
-            <input nz-input [(ngModel)]="taskForm.tagsRaw" placeholder="e.g. urgent, work, bug" />
+            <div style="font-size:13px;font-weight:500;margin-bottom:4px">Tags</div>
+            <nz-select [(ngModel)]="taskForm.tags" nzMode="tags" nzPlaceHolder="Type a tag and press Enter" style="width:100%"></nz-select>
           </div>
 
           <nz-divider style="margin:4px 0"></nz-divider>
@@ -378,7 +378,7 @@ export class TaskListComponent implements OnInit {
       priority: t.priority,
       categoryId: t.categoryId ?? null,
       dueDate: t.dueDate ? new Date(t.dueDate) : null,
-      tagsRaw: t.tags.join(', ')
+      tags: [...t.tags]
     };
     this.drawerVisible = true;
   }
@@ -386,9 +386,6 @@ export class TaskListComponent implements OnInit {
   closeDrawer() { this.drawerVisible = false; }
 
   saveTask() {
-    const tags = this.taskForm.tagsRaw
-      .split(',').map(s => s.trim()).filter(Boolean);
-
     const payload: CreateTaskPayload = {
       name: this.taskForm.name.trim(),
       description: this.taskForm.description.trim() || undefined,
@@ -396,7 +393,7 @@ export class TaskListComponent implements OnInit {
       priority: this.taskForm.priority as TaskPriority,
       categoryId: this.taskForm.categoryId ?? undefined,
       dueDate: this.taskForm.dueDate ? (this.taskForm.dueDate as Date).toISOString() : undefined,
-      tags
+      tags: this.taskForm.tags
     };
 
     const op = this.editingTask
@@ -469,6 +466,6 @@ export class TaskListComponent implements OnInit {
   priorityColor(p: TaskPriority) { return ['default', 'blue', 'orange', 'red'][p]; }
 
   private emptyTaskForm() {
-    return { name: '', description: '', status: 0, priority: 1, categoryId: null as string | null, dueDate: null as Date | null, tagsRaw: '' };
+    return { name: '', description: '', status: 0, priority: 1, categoryId: null as string | null, dueDate: null as Date | null, tags: [] as string[] };
   }
 }
