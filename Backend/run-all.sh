@@ -24,7 +24,7 @@ TASK_PID=$!
 dotnet run --project "$ROOT/src/Gateway" &
 GW_PID=$!
 
-cd "$ROOT/Frontend" && ng serve --port 4200 &
+cd "$ROOT/../Frontend" && ng serve --port 4200 &
 FE_PID=$!
 
 echo "PIDs: AuthService=$AUTH_PID, TaskService=$TASK_PID, Gateway=$GW_PID, Frontend=$FE_PID"
