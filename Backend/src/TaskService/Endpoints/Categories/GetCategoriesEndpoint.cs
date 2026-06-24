@@ -12,11 +12,12 @@ public class GetCategoriesEndpoint : EndpointWithoutRequest<List<CategoryDto>>
     public override void Configure()
     {
         Get("/api/categories");
+        AllowAnonymous();
     }
 
     public override async Task HandleAsync(CancellationToken ct)
     {
-        var userId = EndpointHelper.GetUserId(User);
+        var userId = EndpointHelper.GetUserId(HttpContext.Request);
         var result = await Mediator.Send(new GetCategoriesQuery(userId), ct);
         await Send.OkAsync(result, ct);
     }

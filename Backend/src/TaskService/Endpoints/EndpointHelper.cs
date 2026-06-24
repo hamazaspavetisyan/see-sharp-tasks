@@ -1,16 +1,14 @@
-using System.IdentityModel.Tokens.Jwt;
-using System.Security.Claims;
+using Microsoft.AspNetCore.Http;
 
 namespace TaskService.Endpoints;
 
 public static class EndpointHelper
 {
-    public static Guid GetUserId(ClaimsPrincipal user)
+    public static Guid GetUserId(HttpRequest request)
     {
-        var claim = user.FindFirst(JwtRegisteredClaimNames.Sub)?.Value
-            ?? user.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        if (claim is null || !Guid.TryParse(claim, out var userId))
-            throw new UnauthorizedAccessException("Invalid user identity.");
+        var value = request.Headers["X-User-Id"].FirstOrDefault();
+        if (value is null || !Guid.TryParse(value, out var userId))
+            throw new UnauthorizedAccessException("Missing or invalid X-User-Id header.");
         return userId;
     }
 }

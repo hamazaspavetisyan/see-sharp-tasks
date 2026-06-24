@@ -18,11 +18,12 @@ public class UpdateCategoryEndpoint : Endpoint<UpdateCategoryRequest, CategoryDt
     public override void Configure()
     {
         Put("/api/categories/{Id}");
+        AllowAnonymous();
     }
 
     public override async Task HandleAsync(UpdateCategoryRequest req, CancellationToken ct)
     {
-        var userId = EndpointHelper.GetUserId(User);
+        var userId = EndpointHelper.GetUserId(HttpContext.Request);
         try
         {
             var result = await Mediator.Send(new UpdateCategoryCommand(req.Id, req.Name, userId), ct);

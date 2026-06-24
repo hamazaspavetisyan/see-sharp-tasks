@@ -25,11 +25,12 @@ public class UpdateTaskEndpoint : Endpoint<UpdateTaskRequest, TaskItemDto>
     public override void Configure()
     {
         Put("/api/tasks/{Id}");
+        AllowAnonymous();
     }
 
     public override async Task HandleAsync(UpdateTaskRequest req, CancellationToken ct)
     {
-        var userId = EndpointHelper.GetUserId(User);
+        var userId = EndpointHelper.GetUserId(HttpContext.Request);
         try
         {
             var result = await Mediator.Send(

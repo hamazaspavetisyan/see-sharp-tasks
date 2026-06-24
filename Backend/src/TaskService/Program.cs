@@ -1,10 +1,7 @@
-using System.Text;
 using FastEndpoints;
 using FastEndpoints.Swagger;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.IdentityModel.Tokens;
 using TaskService.Application.Commands.Tasks;
 using TaskService.Application.Services;
 using TaskService.Infrastructure.GrpcClients;
@@ -41,34 +38,6 @@ builder.Services.AddDbContext<TasksDbContext>(options =>
 builder.Services.AddMediatR(cfg =>
     cfg.RegisterServicesFromAssemblyContaining<CreateTaskCommand>());
 
-// JWT
-var jwtSecret = builder.Configuration["Jwt:Secret"];
-if (string.IsNullOrEmpty(jwtSecret))
-{
-    using var lf = LoggerFactory.Create(b => b.AddConsole());
-    lf.CreateLogger("Startup").LogCritical(
-        "Jwt:Secret is not configured. Set it via user-secrets or an environment variable.");
-    throw new InvalidOperationException("Jwt:Secret must be configured via user-secrets or environment.");
-}
-var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "TasksApp.AuthService";
-var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "TasksApp";
-
-builder.Services
-    .AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
-    {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidateAudience = true,
-            ValidateLifetime = true,
-            ValidateIssuerSigningKey = true,
-            ValidIssuer = jwtIssuer,
-            ValidAudience = jwtAudience,
-            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSecret))
-        };
-    });
-builder.Services.AddAuthorization();
 
 // gRPC client → AuthService
 var authGrpcAddress = builder.Configuration["AuthService:GrpcAddress"] ?? "http://localhost:5101";
@@ -83,7 +52,6 @@ builder.Services.AddHttpContextAccessor();
 // Swagger
 builder.Services.SwaggerDocument(o =>
 {
-    o.EnableJWTBearerAuth = true;
     o.DocumentSettings = s =>
     {
         s.Title = "Task Service API";
@@ -93,8 +61,6 @@ builder.Services.SwaggerDocument(o =>
 
 var app = builder.Build();
 
-app.UseAuthentication();
-app.UseAuthorization();
 app.UseFastEndpoints();
 app.UseSwaggerGen();
 

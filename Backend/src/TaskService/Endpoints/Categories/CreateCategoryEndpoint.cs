@@ -17,11 +17,12 @@ public class CreateCategoryEndpoint : Endpoint<CreateCategoryRequest, CategoryDt
     public override void Configure()
     {
         Post("/api/categories");
+        AllowAnonymous();
     }
 
     public override async Task HandleAsync(CreateCategoryRequest req, CancellationToken ct)
     {
-        var userId = EndpointHelper.GetUserId(User);
+        var userId = EndpointHelper.GetUserId(HttpContext.Request);
         try
         {
             var result = await Mediator.Send(new CreateCategoryCommand(req.Name, userId), ct);

@@ -16,11 +16,12 @@ public class DeleteCategoryEndpoint : Endpoint<DeleteCategoryRequest>
     public override void Configure()
     {
         Delete("/api/categories/{Id}");
+        AllowAnonymous();
     }
 
     public override async Task HandleAsync(DeleteCategoryRequest req, CancellationToken ct)
     {
-        var userId = EndpointHelper.GetUserId(User);
+        var userId = EndpointHelper.GetUserId(HttpContext.Request);
         try
         {
             await Mediator.Send(new DeleteCategoryCommand(req.Id, userId), ct);

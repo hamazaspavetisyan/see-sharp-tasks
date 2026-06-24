@@ -24,11 +24,12 @@ public class CreateTaskEndpoint : Endpoint<CreateTaskRequest, TaskItemDto>
     public override void Configure()
     {
         Post("/api/tasks");
+        AllowAnonymous();
     }
 
     public override async Task HandleAsync(CreateTaskRequest req, CancellationToken ct)
     {
-        var userId = EndpointHelper.GetUserId(User);
+        var userId = EndpointHelper.GetUserId(HttpContext.Request);
         var result = await Mediator.Send(
             new CreateTaskCommand(req.Name, req.Description, req.CategoryId,
                 req.Status, req.Priority, req.DueDate, req.Tags, userId), ct);

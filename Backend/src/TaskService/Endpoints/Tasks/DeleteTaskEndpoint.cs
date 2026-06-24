@@ -16,11 +16,12 @@ public class DeleteTaskEndpoint : Endpoint<DeleteTaskRequest>
     public override void Configure()
     {
         Delete("/api/tasks/{Id}");
+        AllowAnonymous();
     }
 
     public override async Task HandleAsync(DeleteTaskRequest req, CancellationToken ct)
     {
-        var userId = EndpointHelper.GetUserId(User);
+        var userId = EndpointHelper.GetUserId(HttpContext.Request);
         try
         {
             await Mediator.Send(new DeleteTaskCommand(req.Id, userId), ct);

@@ -17,11 +17,12 @@ public class GetTaskByIdEndpoint : Endpoint<GetTaskByIdRequest, TaskItemDto>
     public override void Configure()
     {
         Get("/api/tasks/{Id}");
+        AllowAnonymous();
     }
 
     public override async Task HandleAsync(GetTaskByIdRequest req, CancellationToken ct)
     {
-        var userId = EndpointHelper.GetUserId(User);
+        var userId = EndpointHelper.GetUserId(HttpContext.Request);
         try
         {
             var result = await Mediator.Send(new GetTaskByIdQuery(req.Id, userId), ct);
