@@ -22,7 +22,7 @@ public class RegisterCommandHandler(AuthDbContext db) : IRequestHandler<Register
         };
 
         db.Users.Add(user);
-        await db.SaveChangesAsync(cancellationToken);
+        await db.SaveChangesAsync(cancellationToken);// xxxx todo, why not SaveChanges but async ?
 
         return new RegisterResponse(user.Id, user.Email);
     }
