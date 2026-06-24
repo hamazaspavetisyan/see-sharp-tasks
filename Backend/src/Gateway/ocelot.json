@@ -1,6 +1,24 @@
 {
   "Routes": [
     {
+      "UpstreamPathTemplate": "/swagger/authservice/{everything}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DownstreamPathTemplate": "/swagger/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { "Host": "localhost", "Port": 5100 }
+      ]
+    },
+    {
+      "UpstreamPathTemplate": "/swagger/taskservice/{everything}",
+      "UpstreamHttpMethod": [ "GET" ],
+      "DownstreamPathTemplate": "/swagger/{everything}",
+      "DownstreamScheme": "http",
+      "DownstreamHostAndPorts": [
+        { "Host": "localhost", "Port": 5200 }
+      ]
+    },
+    {
       "UpstreamPathTemplate": "/api/auth/register",
       "UpstreamHttpMethod": [ "POST" ],
       "DownstreamPathTemplate": "/api/auth/register",
