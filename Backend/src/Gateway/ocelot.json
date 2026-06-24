@@ -7,7 +7,14 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         { "Host": "localhost", "Port": 5100 }
-      ]
+      ],
+      "RateLimitOptions": {
+        "EnableRateLimiting": true,
+        "Period": "1m",
+        "PeriodTimespan": 60,
+        "Limit": 10,
+        "ClientIdHeader": "X-Forwarded-For"
+      }
     },
     {
       "UpstreamPathTemplate": "/api/auth/login",
@@ -16,7 +23,14 @@
       "DownstreamScheme": "http",
       "DownstreamHostAndPorts": [
         { "Host": "localhost", "Port": 5100 }
-      ]
+      ],
+      "RateLimitOptions": {
+        "EnableRateLimiting": true,
+        "Period": "1m",
+        "PeriodTimespan": 60,
+        "Limit": 10,
+        "ClientIdHeader": "X-Forwarded-For"
+      }
     },
     {
       "UpstreamPathTemplate": "/api/auth/{everything}",
@@ -95,6 +109,11 @@
     }
   ],
   "GlobalConfiguration": {
-    "BaseUrl": "http://localhost:5000"
+    "BaseUrl": "http://localhost:5000",
+    "RateLimitOptions": {
+      "DisableRateLimitHeaders": false,
+      "QuotaExceededMessage": "Too many requests, please try again later.",
+      "HttpStatusCode": 429
+    }
   }
 }
