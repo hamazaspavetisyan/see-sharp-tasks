@@ -64,6 +64,32 @@ public class TasksEndpointTests(TaskServiceFactory factory) : IClassFixture<Task
     }
 
     [Fact]
+    public async Task CreateTask_EmptyName_Returns400()
+    {
+        Authenticate();
+        var payload = new { Name = "", Priority = 0, Status = 0, Tags = Array.Empty<string>() };
+        var response = await _client.PostAsJsonAsync("/api/tasks", payload);
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task CreateTask_PastDueDate_Returns400()
+    {
+        Authenticate();
+        var payload = new { Name = "Past Task", Priority = 0, Status = 0, Tags = Array.Empty<string>(), DueDate = DateTime.UtcNow.AddDays(-1) };
+        var response = await _client.PostAsJsonAsync("/api/tasks", payload);
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
+    public async Task GetTasks_InvalidPageSize_Returns400()
+    {
+        Authenticate();
+        var response = await _client.GetAsync("/api/tasks?page=1&pageSize=999");
+        response.StatusCode.Should().Be(HttpStatusCode.BadRequest);
+    }
+
+    [Fact]
     public async Task DeleteTask_ExistingTask_Returns204()
     {
         Authenticate();
