@@ -30,8 +30,7 @@
         "EnableRateLimiting": true,
         "Period": "1m",
         "PeriodTimespan": 60,
-        "Limit": 10,
-        "ClientIdHeader": "X-Forwarded-For"
+        "Limit": 10
       }
     },
     {
@@ -46,8 +45,7 @@
         "EnableRateLimiting": true,
         "Period": "1m",
         "PeriodTimespan": 60,
-        "Limit": 10,
-        "ClientIdHeader": "X-Forwarded-For"
+        "Limit": 10
       }
     },
     {
