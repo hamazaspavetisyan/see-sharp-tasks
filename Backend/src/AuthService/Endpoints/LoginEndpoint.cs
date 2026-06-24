@@ -1,6 +1,7 @@
 using AuthService.Application.Commands;
 using AuthService.Application.DTOs;
 using FastEndpoints;
+using FluentValidation;
 using MediatR;
 
 namespace AuthService.Endpoints;
@@ -9,6 +10,19 @@ public class LoginRequest
 {
     public string Email { get; set; } = default!;
     public string Password { get; set; } = default!;
+}
+
+public class LoginRequestValidator : Validator<LoginRequest>
+{
+    public LoginRequestValidator()
+    {
+        RuleFor(x => x.Email)
+            .NotEmpty()
+            .EmailAddress().WithMessage("Email must be a valid email address.");
+
+        RuleFor(x => x.Password)
+            .NotEmpty();
+    }
 }
 
 public class LoginEndpoint : Endpoint<LoginRequest, LoginResponse>

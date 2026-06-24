@@ -1,6 +1,7 @@
 using AuthService.Application.Commands;
 using AuthService.Application.DTOs;
 using FastEndpoints;
+using FluentValidation;
 using MediatR;
 
 namespace AuthService.Endpoints;
@@ -9,6 +10,20 @@ public class RegisterRequest
 {
     public string Email { get; set; } = default!;
     public string Password { get; set; } = default!;
+}
+
+public class RegisterRequestValidator : Validator<RegisterRequest>
+{
+    public RegisterRequestValidator()
+    {
+        RuleFor(x => x.Email)
+            .NotEmpty()
+            .EmailAddress().WithMessage("Email must be a valid email address.");
+
+        RuleFor(x => x.Password)
+            .NotEmpty()
+            .MinimumLength(8).WithMessage("Password must be at least 8 characters.");
+    }
 }
 
 public class RegisterEndpoint : Endpoint<RegisterRequest, RegisterResponse>
