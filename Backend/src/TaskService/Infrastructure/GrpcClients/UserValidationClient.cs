@@ -9,7 +9,7 @@ public class UserValidationClient(UserValidation.UserValidationClient grpcClient
     public async Task<bool> ValidateUserAsync(Guid userId, CancellationToken ct = default)
     {
         var response = await grpcClient.ValidateUserAsync(
-            new ValidateUserRequest { UserId = userId.ToString() }, cancellationToken: ct);
+            new ValidateUserRequest { UserId = userId.ToString() }, cancellationToken: ct);// xxxx todo
         return response.IsValid;
     }
 }
